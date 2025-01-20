@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curriculum Details</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      color: #e0e0e0;
+      display: flex;
+      overflow-x: hidden;
+      height: 100vh;
+      position: relative;
+      background-image: url('https://static.vecteezy.com/system/resources/previews/012/051/235/original/black-circuit-technology-business-background-modern-technology-circuit-board-texture-background-design-quantum-computer-technologies-concepts-vector.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      animation: scrollBackground 15s linear infinite;
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes scrollBackground {
+      from { background-position-y: 0; }
+      to { background-position-y: -500px; }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: -1;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(145deg, #1c1c1c, #333333);
+      padding: 20px;
+      color: #e0e0e0;
+      height: 100vh;
+      position: fixed;
+      left: -260px;
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.4s ease-in-out;
+      z-index: 1;
+    }
+
+    .sidebar.visible {
+      transform: translateX(260px);
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #333;
+      color: #e0e0e0;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 2;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .sidebar-toggle:hover {
+      background-color: #555;
+      transform: scale(1.05);
+    }
+
+    .sidebar h2 {
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      text-align: center;
+      font-weight: bold;
+      color: #e0e0e0;
+    }
+
+    .dropdown select, .search-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 15px;
+      color: #333333;
+      background-color: #e0e0e0;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-container button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      color: #e0e0e0;
+      background-color: #444;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .search-container button:hover {
+      background-color: #666;
+      transform: scale(1.05);
+    }
+
+    .container {
+      margin-left: 20px;
+      padding: 20px;
+      max-width: 900px;
+      width: 100%;
+      transition: margin-left 0.4s;
+    }
+
+    .sidebar.visible ~ .container {
+      margin-left: 280px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #e0e0e0;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .year-section {
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      background: #222;
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeInUp 0.8s ease-in-out forwards;
+      opacity: 0;
+    }
+
+    .year-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .year-title {
+      background-color: #333333;
+      color: #e0e0e0;
+      padding: 15px 20px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+
+    .year-title:hover {
+      background-color: #555555;
+    }
+
+    .year-title span {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .subject-list {
+      display: none;
+      padding: 15px;
+      background-color: #1c1c1c;
+      transition: max-height 0.3s ease;
+    }
+
+    .semester-section {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #333;
+      border-radius: 5px;
+      display: block; /* Ensures each semester is visible by default */
+    }
+
+    .subject {
+      margin: 5px 0;
+      font-size: 1.1rem;
+      color: #fff;
+      transition: color 0.3s, padding-left 0.3s;
+    }
+
+    .subject:hover {
+      color: #00aaff;
+      padding-left: 15px;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        left: -100%;
+        box-shadow: none;
+      }
+
+      .container {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="sidebar">
+    <h2>Sections</h2>
+    <div class="dropdown">
+      <select id="yearDropdown" onchange="navigateToSection()">
+        <option value="">Choose Section</option>
+        <option value="classRoutine">Class Routine</option>
+        <option value="syllabus">Syllabus</option>
+        <option value="books">Books</option>
+        <option value="examRoutine">Exam Routine</option>
+      </select>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="searchYear" placeholder="Search Section">
+      <button onclick="searchSection()">🔍 Search</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Curriculum Details</h1>
+
+    <!-- Class Routine Section -->
+    <div class="year-section" id="classRoutine">
+      <div class="year-title" onclick="toggleNotes('classRoutine-routine')">Class Routine <span>+</span></div>
+      <div class="subject-list" id="classRoutine-routine">
+        <div class="semester-section" id="classRoutine-semester1">
+          <a class="subject" href="#">Semester 1</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester2">
+          <a class="subject" href="#">Semester 2</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester3">
+          <a class="subject" href="#">Semester 3</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester4">
+          <a class="subject" href="#">Semester 4</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester5">
+          <a class="subject" href="#">Semester 5</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester6">
+          <a class="subject" href="#">Semester 6</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester7">
+          <a class="subject" href="#">Semester 7</a>
+        </div>
+        <div class="semester-section" id="classRoutine-semester8">
+          <a class="subject" href="#">Semester 8</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Syllabus Section -->
+    <div class="year-section" id="syllabus">
+      <div class="year-title" onclick="toggleNotes('syllabus-routine')">Syllabus <span>+</span></div>
+      <div class="subject-list" id="syllabus-routine">
+        <div class="semester-section" id="syllabus-semester1">
+          <a class="subject" href="#">Semester 1</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester2">
+          <a class="subject" href="#">Semester 2</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester3">
+          <a class="subject" href="#">Semester 3</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester4">
+          <a class="subject" href="#">Semester 4</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester5">
+          <a class="subject" href="#">Semester 5</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester6">
+          <a class="subject" href="#">Semester 6</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester7">
+          <a class="subject" href="#">Semester 7</a>
+        </div>
+        <div class="semester-section" id="syllabus-semester8">
+          <a class="subject" href="#">Semester 8</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Books Section -->
+    <div class="year-section" id="books">
+      <div class="year-title" onclick="toggleNotes('books-routine')">Books <span>+</span></div>
+      <div class="subject-list" id="books-routine">
+        <div class="semester-section" id="books-semester1">
+          <a class="subject" href="#">Semester 1</a>
+        </div>
+        <div class="semester-section" id="books-semester2">
+          <a class="subject" href="#">Semester 2</a>
+        </div>
+        <div class="semester-section" id="books-semester3">
+          <a class="subject" href="#">Semester 3</a>
+        </div>
+        <div class="semester-section" id="books-semester4">
+          <a class="subject" href="#">Semester 4</a>
+        </div>
+        <div class="semester-section" id="books-semester5">
+          <a class="subject" href="#">Semester 5</a>
+        </div>
+        <div class="semester-section" id="books-semester6">
+          <a class="subject" href="#">Semester 6</a>
+        </div>
+        <div class="semester-section" id="books-semester7">
+          <a class="subject" href="#">Semester 7</a>
+        </div>
+        <div class="semester-section" id="books-semester8">
+          <a class="subject" href="#">Semester 8</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Routine Section -->
+    <div class="year-section" id="examRoutine">
+      <div class="year-title" onclick="toggleNotes('examRoutine-routine')">Exam Routine <span>+</span></div>
+      <div class="subject-list" id="examRoutine-routine">
+        <div class="semester-section" id="examRoutine-semester1">
+          <a class="subject" href="#">Semester 1</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester2">
+          <a class="subject" href="#">Semester 2</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester3">
+          <a class="subject" href="#">Semester 3</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester4">
+          <a class="subject" href="#">Semester 4</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester5">
+          <a class="subject" href="#">Semester 5</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester6">
+          <a class="subject" href="#">Semester 6</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester7">
+          <a class="subject" href="#">Semester 7</a>
+        </div>
+        <div class="semester-section" id="examRoutine-semester8">
+          <a class="subject" href="#">Semester 8</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('visible');
+    }
+
+    function toggleNotes(id) {
+      const section = document.getElementById(id);
+      const icon = section.previousElementSibling.querySelector('span');
+      if (section.style.display === 'block') {
+        section.style.display = 'none';
+        icon.innerHTML = '+';
+      } else {
+        section.style.display = 'block';
+        icon.innerHTML = '−';
+      }
+    }
+
+    function navigateToSection() {
+      const selectedValue = document.getElementById('yearDropdown').value;
+      if (selectedValue) {
+        const section = document.getElementById(selectedValue);
+        window.scrollTo({
+          top: section.offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    function searchSection() {
+      const query = document.getElementById('searchYear').value.toLowerCase();
+      const sections = document.querySelectorAll('.year-section');
+      sections.forEach(section => {
+        const title = section.querySelector('.year-title').innerText.toLowerCase();
+        if (title.includes(query)) {
+          section.style.display = 'block';
+        } else {
+          section.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

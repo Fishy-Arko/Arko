@@ -1,0 +1,58 @@
+<?php
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header("Location: index.html"); // Redirect if already logged in
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="Login.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login Page">
+    <title>Login</title>
+    <!-- Add Bootstrap for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h1>Attendance Tracking System</h1>
+            <p>Your reliable solution for attendance management.</p>
+        </div>
+  
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h1 style="text-align: center;">LOGIN FORM</h1>
+            <form action="login.php" method="POST">
+
+            <!-- Email Input -->
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap and jQuery for form validation and styling -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+

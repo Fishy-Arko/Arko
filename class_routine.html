@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Routine</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling */
+    body {
+      font-family: Arial, sans-serif;
+      color: #e0e0e0;
+      display: flex;
+      overflow-x: hidden;
+      height: 100vh;
+      position: relative; /* Needed for absolute positioning of background */
+      background-image: url('https://wallpapercave.com/wp/wp3194646.jpg'); /* Replace with your image URL */
+      background-size: cover; /* Cover the entire viewport */
+      background-attachment: fixed; /* Fix the background to create the scroll effect */
+      background-position: center; /* Center the background image */
+      animation: scrollBackground 15s linear infinite;
+    }
+
+    /* Dark Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: -1;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(145deg, #1c1c1c, #333333);
+      padding: 20px;
+      color: #e0e0e0;
+      height: 100vh;
+      position: fixed;
+      left: -260px; /* Initially hidden */
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.4s ease-in-out;
+      z-index: 1;
+    }
+
+    /* Sidebar visible styling */
+    .sidebar.visible {
+      transform: translateX(260px);
+    }
+
+    /* Sidebar toggle button */
+    .sidebar-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #333;
+      color: #e0e0e0;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 2;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar-toggle:hover {
+      background-color: #555;
+    }
+
+    /* Sidebar content */
+    .sidebar h2 {
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      text-align: center;
+      font-weight: bold;
+      color: #e0e0e0;
+    }
+
+    .dropdown select, .search-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 15px;
+      color: #333333;
+      background-color: #e0e0e0;
+    }
+
+    .search-container button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      color: #e0e0e0;
+      background-color: #444;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .search-container button:hover {
+      background-color: #666;
+      transform: scale(1.05);
+    }
+
+    /* Main Container Styling */
+    .container {
+      margin-left: 20px;
+      padding: 20px;
+      max-width: 900px;
+      width: 100%;
+      transition: margin-left 0.4s;
+    }
+
+    /* Adjust main container margin when sidebar is visible */
+    .sidebar.visible ~ .container {
+      margin-left: 280px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #e0e0e0;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    /* Year Section Styling */
+    .year-section {
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      background: #222;
+      transition: transform 0.3s;
+    }
+
+    .year-section:hover {
+      transform: translateY(-5px);
+    }
+
+    .year-title {
+      background-color: #333333;
+      color: #e0e0e0;
+      padding: 15px 20px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+
+    .year-title:hover {
+      background-color: #555555;
+    }
+
+    .year-title span {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .subject-list {
+      display: none;
+      padding: 15px;
+      background-color: #1c1c1c;
+      transition: max-height 0.3s ease;
+    }
+
+    .subject {
+      margin: 10px 0;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      transition: color 0.3s, padding-left 0.3s;
+    }
+
+    .subject:hover {
+      color: #00aaff;
+      padding-left: 15px;
+    }
+
+    .subject:last-child {
+      border-bottom: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        left: -100%;
+        box-shadow: none;
+      }
+
+      .container {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+  <!-- Sidebar with Dropdown and Search -->
+  <div class="sidebar">
+    <h2>Select Year</h2>
+    <div class="dropdown">
+      <select id="yearDropdown" onchange="navigateToYear()">
+        <option value="">Choose Year</option>
+        <option value="year1">1st Year</option>
+        <option value="year2">2nd Year</option>
+        <option value="year3">3rd Year</option>
+        <option value="year4">4th Year</option>
+      </select>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="searchYear" placeholder="Search Year">
+      <button onclick="searchYear()">🔍 Search</button>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="container">
+    <h1>Class Routine</h1>
+
+    <!-- Year Sections -->
+    <div class="year-section" id="year1">
+      <div class="year-title" onclick="toggleNotes('year1-routine')">1st Year <span>+</span></div>
+      <div class="subject-list" id="year1-routine" style="display: none;">
+        <div class="subject">
+          <a href="path/to/your/semester1.pdf" target="_blank">Semester 1</a>
+        </div>
+        <div class="subject">
+          <a href="path/to/your/semester2.pdf" target="_blank">Semester 2</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="year-section" id="year2">
+      <div class="year-title" onclick="toggleNotes('year2-routine')">2nd Year <span>+</span></div>
+      <div class="subject-list" id="year2-routine" style="display: none;">
+        <div class="subject">
+          <a href="path/to/your/semester3.pdf" target="_blank">Semester 3</a>
+        </div>
+        <div class="subject">
+          <a href="path/to/your/semester4.pdf" target="_blank">Semester 4</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="year-section" id="year3">
+      <div class="year-title" onclick="toggleNotes('year3-routine')">3rd Year <span>+</span></div>
+      <div class="subject-list" id="year3-routine" style="display: none;">
+        <div class="subject">
+          <a href="path/to/your/semester5.pdf" target="_blank">Semester 5</a>
+        </div>
+        <div class="subject">
+          <a href="path/to/your/semester6.pdf" target="_blank">Semester 6</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="year-section" id="year4">
+      <div class="year-title" onclick="toggleNotes('year4-routine')">4th Year <span>+</span></div>
+      <div class="subject-list" id="year4-routine" style="display: none;">
+        <div class="subject">
+          <a href="path/to/your/semester7.pdf" target="_blank">Semester 7</a>
+        </div>
+        <div class="subject">
+          <a href="path/to/your/semester8.pdf" target="_blank">Semester 8</a>
+        </div>
+      </div>
+    </div>
+
+  <script>
+    function toggleNotes(id) {
+      const notes = document.getElementById(id);
+      const button = notes.previousElementSibling.querySelector("span");
+      if (notes.style.display === 'none' || notes.style.display === '') {
+        notes.style.display = 'block';
+        button.innerText = '-';
+      } else {
+        notes.style.display = 'none';
+        button.innerText = '+';
+      }
+    }
+
+    function navigateToYear() {
+      const year = document.getElementById("yearDropdown").value;
+      if (year) {
+        document.getElementById(year).scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function searchYear() {
+      const input = document.getElementById("searchYear").value.toLowerCase();
+      const yearSections = {
+        '1st year': 'year1',
+        '2nd year': 'year2',
+        '3rd year': 'year3',
+        '4th year': 'year4'
+      };
+      if (yearSections[input]) {
+        document.getElementById(yearSections[input]).scrollIntoView({ behavior: 'smooth' });
+      } else {
+        alert("Please enter a valid year (e.g., 1st year, 2nd year).");
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('visible');
+    }
+  </script>
+</body>
+</html>
